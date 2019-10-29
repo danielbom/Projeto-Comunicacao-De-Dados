@@ -63,7 +63,7 @@ void loop() {
 
   if(response[0] == PROTOCOL_ID) {
     Serial.println("LOG: Mensage (" + String(response) + ")");
-    if (response[1] == radioNumber || response[1] == 'S') { // Mensagem enviada para mim
+    if (response[1] == radioNumber || response[1] == 's') { // Mensagem enviada para mim
       switch (response[2]) {
         case 'b': // Mensagem do sensor de presença
           Serial.print(response);
