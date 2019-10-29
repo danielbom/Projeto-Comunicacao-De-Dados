@@ -9,7 +9,7 @@ float randomize() {
 }
 
 void updatePresence() {
-  presence = randomize() > 0.05;
+  presence = randomize() > 0.80;
 }
 
 
@@ -20,7 +20,7 @@ RF24 radio(7, 8);
 #define PIPE_RX 0xF0F0F0F0E1LL
 char PROTOCOL_ID = 'H';
 char radioNumber = 'b';
-char destiny = 'e';
+char destiny = 's';
 
 String encapsulate(String message, char destiny) {
   String response;
@@ -38,7 +38,7 @@ void setup() {
 
   radio.setPALevel(RF24_PA_HIGH);
   radio.setAutoAck(false);
-  //radio.setChannel(37);
+  radio.setChannel(37);
 
   radio.openWritingPipe(PIPE_TX);
   radio.openReadingPipe(1, PIPE_RX);
@@ -70,7 +70,6 @@ void loop() {
   delay(50);
 
   while (radio.available()) {
-    Serial.println("LOG: Recebendo...");
     radio.read(&response, sizeof(response));
   }
   delay(50);
