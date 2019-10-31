@@ -32,7 +32,7 @@ String encapsulate(String message, char destiny) {
 }
 
 void setup() {
-  srand ( time(NULL) );
+  srand ( millis() );
   Serial.begin(115200);
   radio.begin();
 
@@ -76,7 +76,7 @@ void loop() {
   //Serial.println("Loop");
 
   if(response[0] == PROTOCOL_ID) {
-    Serial.println("LOG: Mensage (" + String(response) + ")");
+    Serial.println("LOG: Mensagem da rede: " + String(response));
     if (response[1] == radioNumber) {
       if (response[2] == '*') {   // Se for do AP, enviar
         if (message.length() != 0) {
@@ -85,10 +85,11 @@ void loop() {
           waitCarrier();
           send(package);
 
-          Serial.println("LOG: Enviando (" + package + ")");
+          Serial.println("LOG: Enviado: " + String(package).substring(3));
         }
       } else {  // Caso contrário, imprima
-        Serial.println(response);
+        Serial.print("LOG: Recebido: ");
+        Serial.println(String(response).substring(3));
       }
     }
   }
