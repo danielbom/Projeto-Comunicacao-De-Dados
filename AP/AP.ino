@@ -4,8 +4,8 @@
 char radioNumber = '*';
 char clients[3] = {'b','0','e'};
 
-int timeout = 500;
-int delayTime = 500;
+int timeout = 1000;
+int delayTime = 5000;
 
 RF24 radio(7,8);
 
@@ -86,7 +86,7 @@ void tokenRing() {
     String package = encapsulate("", clients[i]);
     Serial.print("Token: ");
     Serial.println(package);
-    for(int tries = 0; tries < 3; tries++) {
+    for(int tries = 0; tries < 10; tries++) {
       testCarrier();
       send(package);
       if (received()) {
@@ -108,7 +108,7 @@ void setup() {
   radio.setPALevel(RF24_PA_HIGH);
   radio.setAutoAck(false);
 
-  // radio.setChannel(37);
+  radio.setChannel(37);
   
   radio.openWritingPipe(PIPE_TX);
   radio.openReadingPipe(1, PIPE_RX);

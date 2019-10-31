@@ -9,6 +9,7 @@ RF24 radio(7, 8);
 #define PIPE_RX 0xF0F0F0F0E1LL
 char PROTOCOL_ID = 'H';
 char radioNumber = '0';
+char destiny = 'b';
 
 String encapsulate(String message, char destiny) {
   String response;
@@ -25,7 +26,8 @@ void setup() {
 
   radio.setPALevel(RF24_PA_HIGH);
   radio.setAutoAck(false);
-  //radio.setChannel(37);
+  
+  radio.setChannel(37);
 
   radio.openWritingPipe(PIPE_TX);
   radio.openReadingPipe(1, PIPE_RX);
@@ -50,30 +52,37 @@ void send(String package) {
 }
 
 void loop() {
+  String message = String(count);
   char response[32] = {0};
 
   radio.startListening();
   delay(50);
 
-  while (radio.available()) {
-    Serial.println("LOG: Recebendo...");
+  while (radio.available()) 
     radio.read(&response, sizeof(response));
-  }
   delay(50);
 
   if(response[0] == PROTOCOL_ID) {
-    Serial.println("LOG: Mensage (" + String(response) + ")");
+    Serial.println("LOG: Mensagem da rede: " + String(response));
     if (response[1] == radioNumber || response[1] == 's') { // Mensagem enviada para mim
       switch (response[2]) {
         case 'b': // Mensagem do sensor de presença
-          Serial.print(response);
+          Serial.print("LOG: Recebido: ");
+          Serial.print(String(response).substring(3));
           Serial.print(" ");
           Serial.println(count);
           count += response[3] == '0';
           if (count > 5) {
-            Serial.println("A luz foi desligada.");
+            Serial.println("LOG: Desligada.");
+          } else {
+            Serial.println("LOG: Ligada.");
           }
           break;
+        case '*':
+          String package = encapsulate(message, destiny);
+          waitCarrier();
+          send(package);
+          Serial.println("LOG: Enviando: " + package.substring(3));
       }
     }
   }
