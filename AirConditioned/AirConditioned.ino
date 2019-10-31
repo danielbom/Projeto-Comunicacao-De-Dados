@@ -43,7 +43,7 @@ void setup() {
 
   radio.setPALevel(RF24_PA_HIGH);
   radio.setAutoAck(false);
-  //radio.setChannel(37);
+  radio.setChannel(37);
 
   radio.openWritingPipe(PIPE_TX);
   radio.openReadingPipe(1, PIPE_RX);
@@ -75,25 +75,25 @@ void loop() {
   delay(50);
 
   while (radio.available()) {
-    Serial.println("LOG: Recebendo...");
     radio.read(&response, sizeof(response));
   }
   delay(50);
   //Serial.println("Loop");
 
   if(response[0] == PROTOCOL_ID) {
-    Serial.println("LOG: Mensage (" + String(response) + ")");
-    if (response[1] == radioNumber) {
+    Serial.println("LOG: Mensagem da rede " + String(response));
+    if (response[1] == radioNumber || response[1] == 's') {
       if (response[2] == '*') {   // Se for do AP, enviar
         if (message.length() != 0) {
           String package = encapsulate(message, destiny);
           waitCarrier();
           send(package);
 
-          Serial.println("LOG: Enviando (" + package + ")");
+          Serial.println("LOG: Enviado "+ String(package).substring(3) );
         }
       } else {  // Caso contrário, imprima
-        Serial.println(response);
+        Serial.print("LOG: Recebido ");
+        Serial.println(String(response).substring(3));
         updateTemperature(response[3]);
       }
     }
